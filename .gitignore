@@ -1,0 +1,47 @@
+
+# Go build files
+bin/
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test cache
+*.test
+*.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE folders
+.vscode/
+.idea/
+*.swp
+
+# Local environment files
+.env
+.env.*
+!env.example
+
+# Docker
+docker-compose.override.yml
+docker-data/
+*.tar
+
+# Temporary files
+tmp/
+*.tmp
+
+# Generated files
+coverage.txt
+dist/
