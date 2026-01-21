@@ -4,14 +4,19 @@ package main
 import (
     "fmt"
     "os"
+
+    "shorten-service/internal/repository"
     "shorten-service/internal/router"
+    "shorten-service/internal/service"
 )
 
 func main() {
     addr := env("ADDR", ":8080")
     baseURL := env("BASE_URL", "http://localhost:8080")
 
-    router := router.SetupRouter(baseURL)
+    repo := repository.NewDevRepo()
+    service := service.NewShorten(baseURL, repo)
+    router := router.SetupRouter(service)
 
     if err := router.Run(addr); err != nil {
 		fmt.Printf("startup service failed, err: %v\n", err)
