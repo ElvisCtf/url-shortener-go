@@ -5,30 +5,31 @@ import (
     "sync"
 	"time"
 
+    "shorten-service/internal/model"
     "shorten-service/internal/util"
 )
 
-var ErrNotFound = errors.New("not found")
+var notFoundError = errors.New("not found")
 
-type DevRepo struct {
+type MemoryRepo struct {
     mutex   sync.RWMutex
     counter uint64
-    store   map[string]Link
+    store   map[string]model.Link
 }
 
-func NewDevRepo() *DevRepo {
-    return &DevRepo{
-        store: make(map[string]Link),
+func NewMemoryRepo() *MemoryRepo {
+    return &MemoryRepo{
+        store: make(map[string]model.Link),
     }
 }
 
-func (repo *DevRepo) Save(originalURL string) string {
+func (repo *MemoryRepo) Save(originalURL string) string {
     repo.mutex.Lock()
     defer repo.mutex.Unlock()
 
     repo.counter++
     code := util.EncodeBase62(repo.counter)
-    link := Link{
+    link := model.Link{
         Code:        code,
         OriginalURL: originalURL,
         CreatedAt:   time.Now(),
@@ -38,13 +39,13 @@ func (repo *DevRepo) Save(originalURL string) string {
     return code
 }
 
-func (repo *DevRepo) FindByCode(code string) (*Link, error) {
+func (repo *MemoryRepo) FindByCode(code string) (*model.Link, error) {
     repo.mutex.RLock()
     defer repo.mutex.RUnlock()
 
     link, ok := repo.store[code]
     if !ok {
-        return nil, ErrNotFound
+        return nil, notFoundError
     }
     return &link, nil
 }

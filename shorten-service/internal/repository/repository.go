@@ -1,16 +1,18 @@
 package repository
 
 import (
-    "time"
+    "shorten-service/internal/model"
 )
-
-type Link struct {
-    Code        string
-    OriginalURL string
-    CreatedAt 	time.Time
-}
 
 type Repository interface {
     Save(originalURL string) string
-    FindByCode(code string) (*Link, error)
+    FindByCode(code string) (*model.Link, error)
+}
+
+func NewRepo(storage string) Repository {
+    if storage == "postgre" {
+        return NewPostgreRepo()
+    } else {
+        return NewMemoryRepo()
+    }
 }
