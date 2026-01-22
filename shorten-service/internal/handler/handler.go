@@ -18,6 +18,12 @@ func RegisterShorten(router *gin.Engine, service *service.Shorten) {
 		}
 
 		response := service.Create(request.OriginalURL)
-		c.JSON(http.StatusOK, response)
+		if response != nil {
+			c.JSON(http.StatusOK, response)
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "internal server error",
+			})
+		}
 	})
 }
