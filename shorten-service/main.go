@@ -7,12 +7,17 @@ import (
 	"shorten-service/internal/router"
 	"shorten-service/internal/service"
 	"shorten-service/internal/util"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+        log.Println("No .env file found")
+    }
     addr := util.Env("ADDR", ":8080")
     baseURL := util.Env("BASE_URL", "http://localhost:8080")
-    storage := util.Env("STORAGE", "postgre")
+    storage := util.Env("STORAGE", "memory")
 
     repo := repository.NewRepo(storage)
     service := service.NewShorten(baseURL, repo)
