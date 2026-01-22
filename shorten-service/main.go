@@ -15,7 +15,6 @@ func main() {
     storage := util.Env("STORAGE", "postgre")
 
     repo := repository.NewRepo(storage)
-
     service := service.NewShorten(baseURL, repo)
     router := router.SetupRouter(service)
 

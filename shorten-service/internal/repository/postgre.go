@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 	"log"
 
@@ -61,20 +60,4 @@ func (repo *PostgreRepo) Save(originalURL string) (string, error) {
     }
 
     return link.Code, nil
-}
-
-
-func (repo *PostgreRepo) FindByCode(code string) (*model.Link, error) {
-    var link model.Link
-    err := repo.db.
-        Where("code = ?", code).
-        First(&link).Error
-
-    if err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, nil
-        }
-        return nil, err
-    }
-    return &link, nil
 }

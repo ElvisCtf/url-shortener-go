@@ -43,14 +43,3 @@ func (repo *MemoryRepo) Save(originalURL string) (string, error) {
 
     return code, nil
 }
-
-func (repo *MemoryRepo) FindByCode(code string) (*model.Link, error) {
-    repo.mutex.RLock()
-    defer repo.mutex.RUnlock()
-
-    link, ok := repo.store[code]
-    if !ok {
-        return nil, notFoundErr
-    }
-    return &link, nil
-}
