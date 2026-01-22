@@ -12,10 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var errNotFound = errors.New("not found")
-
 type PostgreRepo struct {
-    DB *gorm.DB
+    db *gorm.DB
 }
 
 func NewPostgreRepo() *PostgreRepo {
@@ -41,14 +39,33 @@ func NewPostgreRepo() *PostgreRepo {
 		log.Fatal(err)
 	}
 
-	return &PostgreRepo{DB: db}
+	return &PostgreRepo{db: db}
 }
 
 
-func (repo *PostgreRepo) Save(originalURL string) string {
-    return ""
+func (repo *PostgreRepo) Save(originalURL string) (string, error) {
+	link := &model.Link{
+		OriginalURL: originalURL,
+	}
+	if err := repo.db.Create(link).Error; err != nil {
+		log.Fatal(err)
+		return "", saveErr
+	}
+	return link.Code, nil
 }
+
 
 func (repo *PostgreRepo) FindByCode(code string) (*model.Link, error) {
-    return nil, nil
+    var link model.Link
+    err := repo.db.
+        Where("code = ?", code).
+        First(&link).Error
+
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, nil
+        }
+        return nil, err
+    }
+    return &link, nil
 }

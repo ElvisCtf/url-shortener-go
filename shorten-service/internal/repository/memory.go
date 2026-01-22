@@ -1,15 +1,12 @@
 package repository
 
 import (
-    "errors"
     "sync"
 	"time"
 
     "shorten-service/internal/model"
     "shorten-service/internal/util"
 )
-
-var notFoundError = errors.New("not found")
 
 type MemoryRepo struct {
     mutex   sync.RWMutex
@@ -23,7 +20,7 @@ func NewMemoryRepo() *MemoryRepo {
     }
 }
 
-func (repo *MemoryRepo) Save(originalURL string) string {
+func (repo *MemoryRepo) Save(originalURL string) (string, error) {
     repo.mutex.Lock()
     defer repo.mutex.Unlock()
 
@@ -36,7 +33,7 @@ func (repo *MemoryRepo) Save(originalURL string) string {
     }
     repo.store[link.Code] = link
 
-    return code
+    return code, nil
 }
 
 func (repo *MemoryRepo) FindByCode(code string) (*model.Link, error) {
@@ -45,7 +42,7 @@ func (repo *MemoryRepo) FindByCode(code string) (*model.Link, error) {
 
     link, ok := repo.store[code]
     if !ok {
-        return nil, notFoundError
+        return nil, notFoundErr
     }
     return &link, nil
 }
