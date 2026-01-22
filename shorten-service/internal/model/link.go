@@ -11,7 +11,7 @@ import (
 type Link struct {
     ID          uint64    `gorm:"primaryKey;autoIncrement"`
     Code        string    `gorm:"size:16;uniqueIndex;not null"`
-    OriginalURL string    `gorm:"not null"`
+    OriginalURL string    `gorm:"not null;uniqueIndex"`
     CreatedAt   time.Time `gorm:"autoCreateTime"`
 }
 

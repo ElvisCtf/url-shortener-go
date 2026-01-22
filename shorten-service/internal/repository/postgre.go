@@ -9,6 +9,7 @@ import (
 	"shorten-service/internal/util"
 
 	"gorm.io/driver/postgres"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm"
 )
 
@@ -42,16 +43,24 @@ func NewPostgreRepo() *PostgreRepo {
 	return &PostgreRepo{db: db}
 }
 
-
 func (repo *PostgreRepo) Save(originalURL string) (string, error) {
-	link := &model.Link{
-		OriginalURL: originalURL,
-	}
-	if err := repo.db.Create(link).Error; err != nil {
-		log.Fatal(err)
-		return "", saveErr
-	}
-	return link.Code, nil
+    link := &model.Link{OriginalURL: originalURL}
+
+    // use UPSERT to insert new record
+	// if new URL, then insert and return the code
+	// if old URL, then do a no-op update and return the code 
+    err := repo.db.Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "original_url"}},
+			DoUpdates: clause.Assignments(map[string]any{
+					"original_url": gorm.Expr("EXCLUDED.original_url"),
+			}),
+		}).Create(link).Error
+		
+	if err != nil {
+		return "", err
+    }
+
+    return link.Code, nil
 }
 
 
