@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net/http"
 	"redirect-service/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,12 @@ import (
 func RegisterRedirect(router *gin.Engine, service *service.Redirect) {
 	router.GET("/:code", func(c *gin.Context) {
 		code := c.Param("code")
-		c.JSON(200, gin.H{
-			"received_code": code,
-		})
+		originalURL, error := service.FindOriginalURL(code)
+
+		if error == nil && originalURL != "" {
+			c.Redirect(http.StatusFound, originalURL)
+		} else {
+			c.Status(http.StatusNotFound)
+		}
 	})
 }
