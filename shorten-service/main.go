@@ -16,7 +16,7 @@ func main() {
         log.Println("No .env file found")
     }
     addr := util.Env("ADDR", ":8080")
-    baseURL := util.Env("BASE_URL", "http://localhost:8080")
+    baseURL := util.Env("BASE_URL", "http://localhost:8081")
     storage := util.Env("STORAGE", "postgre")
 
     repo := repository.NewRepo(storage)
