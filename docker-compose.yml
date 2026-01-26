@@ -25,6 +25,8 @@ services:
         - "8080:8080"
       volumes:
         - ./.env:/root/.env
+      env_file:
+        - ./shorten-service/.env
       depends_on:
         postgres16:
           condition: service_healthy
@@ -38,6 +40,8 @@ services:
       - "8081:8081"
     volumes:
       - ./.env:/root/.env
+    env_file:
+      - ./redirect-service/.env
     depends_on:
       postgres16:
         condition: service_healthy
