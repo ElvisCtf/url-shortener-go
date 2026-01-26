@@ -18,13 +18,13 @@ type PostgreRepo struct {
 func newPostgreRepo() *PostgreRepo {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		util.Env("DB_HOST", "localhost"),
+		util.Env("DB_HOST", "postgres16"),
 		util.Env("DB_USER", "postgres16"),
 		util.Env("DB_PASSWORD", "postgres16"),
 		util.Env("DB_NAME", "urlshortener"),
 		util.Env("DB_PORT", "5432"),
 		util.Env("DB_SSLMODE", "disable"),
-		util.Env("TZ", "Asia/Hong_Kong"),
+		util.Env("TZ", "UTC"),
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -54,6 +54,5 @@ func (repo *PostgreRepo) FindByCode(code string) (string, error) {
         return "", err
     }
 
-	log.Printf("MONKE %s", result.OriginalURL)
     return result.OriginalURL, nil
 }

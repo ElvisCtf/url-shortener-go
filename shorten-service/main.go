@@ -17,7 +17,7 @@ func main() {
     }
     addr := util.Env("ADDR", ":8080")
     baseURL := util.Env("BASE_URL", "http://localhost:8080")
-    storage := util.Env("STORAGE", "memory")
+    storage := util.Env("STORAGE", "postgre")
 
     repo := repository.NewRepo(storage)
     service := service.NewShorten(baseURL, repo)
