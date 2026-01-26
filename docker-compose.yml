@@ -1,6 +1,3 @@
-
-version: "3.9"
-
 services:
   postgres16:
     image: postgres:16
@@ -13,6 +10,37 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres16 -d urlshortener"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  shorten:
+      build:
+        context: ./shorten-service
+        dockerfile: Dockerfile
+      container_name: shorten_service
+      ports:
+        - "8080:8080"
+      volumes:
+        - ./.env:/root/.env
+      depends_on:
+        postgres16:
+          condition: service_healthy
+    
+  redirect:
+    build:
+      context: ./redirect-service
+      dockerfile: Dockerfile
+    container_name: redirect_service
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./.env:/root/.env
+    depends_on:
+      postgres16:
+        condition: service_healthy
 
 volumes:
   pgdata:
